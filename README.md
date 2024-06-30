@@ -26,4 +26,8 @@ At the login screen, after the user has entered their username and password, the
    - Proofs match: auth success, the client/server now have a shared session key.
    - Proofs don't match: auth failed, the client is kicked.
 
-The session key is primarily used by the realm server for encryption (`realmd` in gomaggus, `worldd` in most other implementations). When the client connects to the realm server, they must once again prove they know the session key.
+> Both the auth and realm server will need to know the session key.
+
+The session key is primarily used by the realm server for encryption (`realmd` in gomaggus, `worldd` in most other implementations). When the client connects to the realm server, it will send another proof that it knows the session key.
+
+> The session key should not be reused once the client disconnects from the realm server.
