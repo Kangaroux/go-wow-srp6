@@ -20,7 +20,7 @@ At the login screen, after the user has entered their username and password, the
 
 1. Client sends the username (challenge).
 2. Server responds with the salt, the server's public key, and some parameters (challenge reply).
-   - [gomaggus](https://github.com/Kangaroux/gomaggus/blob/fb845ea23e35ba9186a61a0865460fefdb6e5aa4/authd/handler/loginchallenge.go#L80) generates a fake salt if the username doesn't exist to protect against data mining, though this isn't necessary.
+   - gomaggus generates a [fake salt](https://github.com/Kangaroux/gomaggus/blob/c9ab77cc471056992db0e9ae48071b74878cf728/authd/handler/loginchallenge.go#L80) if the username doesn't exist to protect against data mining, though this isn't necessary.
 3. Client computes a proof and sends it (proof).
 4. Server computes the same proof and compares it.
    - Proofs match: auth success, the client/server now have a shared session key.
