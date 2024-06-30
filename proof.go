@@ -37,7 +37,7 @@ func ServerChallengeProof(clientPublicKey, clientProof, sessionKey []byte) []byt
 }
 
 // ReconnectProof returns a proof that the client should send when attempting to reconnect.
-// Like ClientChallengeProof, the server should compare this with the proof received by the client.
+// Like [ClientChallengeProof], the server should compare this with the proof received by the client.
 func ReconnectProof(username string, clientData, serverData, sessionKey []byte) []byte {
 	h := sha1.New()
 	h.Write([]byte(strings.ToUpper(username)))

@@ -1,3 +1,6 @@
+// Package srp implements the SRP6 variant used in World of Warcraft.
+//
+// See the README for more info: https://github.com/kangaroux/go-wow-srp6
 package srp
 
 import (
@@ -14,7 +17,7 @@ func PasswordVerifier(username, password string, salt []byte) []byte {
 }
 
 // ServerPublicKey returns a 32 byte public key. The private key should be a 32 byte array
-// cryptographically secure random data (crypto/rand). The server should send the public key
+// cryptographically secure random data ([crypto/rand]). The server should send the public key
 // to the client in plaintext.
 func ServerPublicKey(verifier, serverPrivateKey []byte) []byte {
 	publicKey := big.NewInt(0).Exp(g, bytesToInt(serverPrivateKey), n)
