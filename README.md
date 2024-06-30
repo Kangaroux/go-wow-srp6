@@ -12,16 +12,11 @@ Check out the [gomaggus](https://github.com/Kangaroux/gomaggus) authd server for
 
 > The [Gtker guide](https://gtker.com/implementation-guide-for-the-world-of-warcraft-flavor-of-srp6/#srp6-overview) provides an approachable and comprehensive look at SRP6. This library is heavily based on this guide.
 
-SRP6 is a protocol used to authenticate users over an insecure connection.
-The client and server do a series of handshakes to prove to each other that
-they know the user's password. At the end of the exchange, both parties will have
-a shared session key.
+SRP6 is a protocol used to authenticate users over an insecure connection. The client and server do a series of handshakes to prove they both know the password. At the end of the exchange, both parties will have a shared session key.
 
-Prior to login, the user registers an account. The server stores the username,
-salt, and password verifier.
+Prior to login, the user registers an account. The server stores the username, salt, and [password verifier](https://pkg.go.dev/github.com/kangaroux/go-wow-srp6#PasswordVerifier).
 
-At the login screen, after the user has entered their username and password,
-the handshaking begins:
+At the login screen, after the user has entered their username and password, the handshaking begins:
 
 1. Client sends the username (challenge).
 2. Server responds with the salt, the server's public key, and some parameters (challenge reply).
