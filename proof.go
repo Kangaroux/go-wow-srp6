@@ -5,7 +5,10 @@ import (
 	"strings"
 )
 
-func CalculateClientProof(
+// ClientChallengeProof returns a proof that the client should send after receiving the auth challenge.
+// The server should compare this with the proof received by the client and verify they match.
+// If they match, the client has proven they know the session key.
+func ClientChallengeProof(
 	username string,
 	salt,
 	clientPublicKey,
@@ -23,7 +26,9 @@ func CalculateClientProof(
 	return h.Sum(nil)
 }
 
-func CalculateServerProof(clientPublicKey, clientProof, sessionKey []byte) []byte {
+// ServerChallengeProof returns a proof that the server should send after validating the client proof.
+// The server proof is not used when the client is reconnecting.
+func ServerChallengeProof(clientPublicKey, clientProof, sessionKey []byte) []byte {
 	h := sha1.New()
 	h.Write(clientPublicKey)
 	h.Write(clientProof)
@@ -31,7 +36,9 @@ func CalculateServerProof(clientPublicKey, clientProof, sessionKey []byte) []byt
 	return h.Sum(nil)
 }
 
-func CalculateReconnectProof(username string, clientData, serverData, sessionKey []byte) []byte {
+// ReconnectProof returns a proof that the client should send when attempting to reconnect.
+// Like ClientChallengeProof, the server should compare this with the proof received by the client.
+func ReconnectProof(username string, clientData, serverData, sessionKey []byte) []byte {
 	h := sha1.New()
 	h.Write([]byte(strings.ToUpper(username)))
 	h.Write(clientData)
@@ -40,7 +47,9 @@ func CalculateReconnectProof(username string, clientData, serverData, sessionKey
 	return h.Sum(nil)
 }
 
-func CalculateWorldProof(username string, clientSeed, serverSeed, sessionKey []byte) []byte {
+// WorldProof returns a proof that the client should send once they have finished authenticating
+// and want to connect to the world/realm server.
+func WorldProof(username string, clientSeed, serverSeed, sessionKey []byte) []byte {
 	h := sha1.New()
 	h.Write([]byte(strings.ToUpper(username)))
 	h.Write([]byte{0, 0, 0, 0})
