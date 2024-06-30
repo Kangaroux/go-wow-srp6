@@ -1,4 +1,4 @@
-// Package srp implements the SRP6 variant used in World of Warcraft.
+// Package srp implements the SRP6 protocol used in World of Warcraft.
 //
 // See the README for more info: https://github.com/kangaroux/go-wow-srp6
 package srp
