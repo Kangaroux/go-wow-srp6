@@ -1,12 +1,12 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/kangaroux/go-wow-srp6.svg)](https://pkg.go.dev/github.com/kangaroux/go-wow-srp6)
 
-This library implements the SRP6 protocol used in World of Warcraft.
+This library implements the SRP6 protocol used in World of Warcraft. It also provides a header implementation for WotLK.
 
 ```
 go get github.com/kangaroux/go-wow-srp6
 ```
 
-Check out the [gomaggus](https://github.com/Kangaroux/gomaggus) authd server for a reference on how this library is used (sorry, but it's 2AM and I'm too tired to write up a full example, unlucky).
+Check out the [gomaggus](https://github.com/Kangaroux/gomaggus) `authd` server for a reference on how this library is used (sorry, but it's 2AM and I'm too tired to write up a full example, unlucky).
 
 ## SRP6 Overview
 
@@ -31,3 +31,11 @@ At the login screen, after the user has entered their username and password, the
 The session key is primarily used by the realm server for encryption (`realmd` in gomaggus, `worldd` in most other implementations). When the client connects to the realm server, it will send another proof that it knows the session key.
 
 > The session key should not be reused once the client disconnects from the realm server.
+
+## Headers
+
+This library includes a header implementation for WotLK. If your server is running Vanilla or TBC you will need to use a different implementation. The Gtker guide contains all the info you will need.
+
+The `go-wow-srp6/header` pkg provides the encryption/decryption for packet headers. Packet headers are encrypted once the client has authenticated with the world/realm server. An [Encode](https://pkg.go.dev/github.com/kangaroux/go-wow-srp6/header#Encode) function will build the header for server packets, and automatically encrypt them after `Init` is called.
+
+For an example of how the header logic is used, check out the `realmd` server in [gomaggus](https://github.com/Kangaroux/gomaggus).

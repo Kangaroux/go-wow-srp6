@@ -33,7 +33,7 @@ var (
 	ErrHeaderSizeTooLarge   = errors.New("srp/header: header size is too large")
 )
 
-// WrathHeader is used for encrypting/decrypting world packet headers in WoTLK.
+// WrathHeader is used for encrypting/decrypting world packet headers in WotLK.
 // Once the client has authenticated, all incoming/outgoing headers must be encrypted.
 type WrathHeader struct {
 	decryptCipher *rc4.Cipher
@@ -44,7 +44,7 @@ type WrathHeader struct {
 }
 
 // Encode returns a header with opcode and size. Encode expects size to not include the
-// 2 bytes for the opcode, and will add +2 to size. In WoTLK, server headers can be either
+// 2 bytes for the opcode, and will add +2 to size. In WotLK, server headers can be either
 // 4 or 5 bytes. Headers will automatically be encrypted if [Init] was called.
 func (h *WrathHeader) Encode(opcode uint16, size uint32) ([]byte, error) {
 	// Include the opcode in the size
@@ -117,7 +117,8 @@ func (h *WrathHeader) InitKeys(sessionKey, decryptKey, encryptKey []byte) error 
 }
 
 // Decrypt decrypts a client header in-place. If the decrypt cipher is not initialized, Decrypt returns
-// ErrCryptoNotInitialized. Decrypt is safe to use concurrently.
+// ErrCryptoNotInitialized. Decrypt is safe to use concurrently. Client packet headers must be decrypted
+// once the client has authenticated with the world/realm server.
 func (h *WrathHeader) Decrypt(data []byte) error {
 	if h.decryptCipher == nil {
 		return ErrCryptoNotInitialized
@@ -131,7 +132,9 @@ func (h *WrathHeader) Decrypt(data []byte) error {
 }
 
 // Encrypt encrypts a server header in-place. If the encrypt cipher is not initialized, Encrypt returns
-// ErrCryptoNotInitialized. Encrypt is safe to use concurrently.
+// ErrCryptoNotInitialized. Encrypt is safe to use concurrently. Server packet headers must be encrypted
+// once the client has authenticated with the world/realm server. [Encode] will call Encrypt once
+// [Init] has been called.
 func (h *WrathHeader) Encrypt(data []byte) error {
 	if h.encryptCipher == nil {
 		return ErrCryptoNotInitialized
