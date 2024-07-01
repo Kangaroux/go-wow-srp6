@@ -3,7 +3,7 @@
 This library implements the SRP6 protocol used in World of Warcraft. It also provides a header implementation for WotLK.
 
 ```
-go get github.com/kangaroux/go-wow-srp6
+go get -u github.com/kangaroux/go-wow-srp6
 ```
 
 Check out the [gomaggus](https://github.com/Kangaroux/gomaggus) `authd` server for a reference on how this library is used (sorry, but it's 2AM and I'm too tired to write up a full example, unlucky).
