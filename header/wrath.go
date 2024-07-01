@@ -21,9 +21,9 @@ var (
 	ErrCryptoNotInitialized = errors.New("header crypto has not been initialized")
 )
 
-// WrathCrypto is used for encrypting/decrypting world packet headers in WoTLK.
+// WrathHeader is used for encrypting/decrypting world packet headers in WoTLK.
 // Once the client has authenticated, all incoming/outgoing headers must be encrypted.
-type WrathCrypto struct {
+type WrathHeader struct {
 	decryptCipher *rc4.Cipher
 	encryptCipher *rc4.Cipher
 	sessionKey    []byte
@@ -32,20 +32,15 @@ type WrathCrypto struct {
 	encryptMutex sync.Mutex
 }
 
-// NewWrathCrypto returns a new WrathCrypto that uses sessionKey. Before the returned
-// crypto object can be used, [Init] should be called to initialize the ciphers.
-func NewWrathCrypto(sessionKey []byte) *WrathCrypto {
-	return &WrathCrypto{sessionKey: sessionKey}
-}
-
-// Init initializes the ciphers with the standard encrypt/decrypt keys.
-func (h *WrathCrypto) Init() error {
+// Init sets up the ciphers using sessionKey. Init must be called before trying to
+// use [Encrypt] or [Decrypt]
+func (h *WrathHeader) Init(sessionKey []byte) error {
 	return h.InitKeys(wrathDecryptKey, wrathEncryptKey)
 }
 
 // InitKeys initializes the ciphers. [Init] should be used instead, unless for some reason
 // different keys are needed.
-func (h *WrathCrypto) InitKeys(decryptKey, encryptKey []byte) error {
+func (h *WrathHeader) InitKeys(decryptKey, encryptKey []byte) error {
 	decryptCipher, err := rc4.NewCipher(h.generateKey(decryptKey))
 	if err != nil {
 		return err
@@ -67,7 +62,7 @@ func (h *WrathCrypto) InitKeys(decryptKey, encryptKey []byte) error {
 
 // Decrypt decrypts a client header in-place. If the decrypt cipher is not initialized, Decrypt returns
 // ErrCryptoNotInitialized. Decrypt is safe to use concurrently.
-func (h *WrathCrypto) Decrypt(data []byte) error {
+func (h *WrathHeader) Decrypt(data []byte) error {
 	if h.decryptCipher == nil {
 		return ErrCryptoNotInitialized
 	}
@@ -81,7 +76,7 @@ func (h *WrathCrypto) Decrypt(data []byte) error {
 
 // Encrypt encrypts a server header in-place. If the encrypt cipher is not initialized, Encrypt returns
 // ErrCryptoNotInitialized. Encrypt is safe to use concurrently.
-func (h *WrathCrypto) Encrypt(data []byte) error {
+func (h *WrathHeader) Encrypt(data []byte) error {
 	if h.encryptCipher == nil {
 		return ErrCryptoNotInitialized
 	}
@@ -94,7 +89,7 @@ func (h *WrathCrypto) Encrypt(data []byte) error {
 }
 
 // generateKey returns a cipher key based on key.
-func (h *WrathCrypto) generateKey(key []byte) []byte {
+func (h *WrathHeader) generateKey(key []byte) []byte {
 	hash := hmac.New(crypto.SHA1.New, key)
 	hash.Write(h.sessionKey)
 	return hash.Sum(nil)
