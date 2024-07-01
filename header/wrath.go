@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	// 23 bits + 1 bit for LARGE_HEADER_FLAG
+	// 23 bits + 1 bit for largeHeaderFlag
 	sizeFieldMaxValue = 0x7FFFFF
 
-	// 15 bits (16th bit is reserved for LARGE_HEADER_FLAG)
+	// 15 bits (16th bit is reserved for largeHeaderFlag)
 	largeHeaderThreshold = 0x7FFF
 
 	// Set on MSB of size field (first header byte)
