@@ -15,8 +15,8 @@ func TestGenerateKey(t *testing.T) {
 		expected := internal.MustDecodeHex(row[2])
 		sessionKey := internal.MustDecodeHex(row[0])
 		fixedKey := internal.MustDecodeHex(row[1])
-		wrath := &WrathHeader{sessionKey: sessionKey}
-		assert.Equal(t, expected, wrath.generateKey(fixedKey))
+		wrath := &WrathHeader{}
+		assert.Equal(t, expected, wrath.generateKey(sessionKey, fixedKey))
 	}
 }
 func TestDrop1024(t *testing.T) {
