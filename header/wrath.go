@@ -26,27 +26,26 @@ var (
 type WrathHeader struct {
 	decryptCipher *rc4.Cipher
 	encryptCipher *rc4.Cipher
-	sessionKey    []byte
 
 	decryptMutex sync.Mutex
 	encryptMutex sync.Mutex
 }
 
 // Init sets up the ciphers using sessionKey. Init must be called before trying to
-// use [Encrypt] or [Decrypt]
+// use [Encrypt] or [Decrypt].
 func (h *WrathHeader) Init(sessionKey []byte) error {
-	return h.InitKeys(wrathDecryptKey, wrathEncryptKey)
+	return h.InitKeys(sessionKey, wrathDecryptKey, wrathEncryptKey)
 }
 
 // InitKeys initializes the ciphers. [Init] should be used instead, unless for some reason
 // different keys are needed.
-func (h *WrathHeader) InitKeys(decryptKey, encryptKey []byte) error {
-	decryptCipher, err := rc4.NewCipher(h.generateKey(decryptKey))
+func (h *WrathHeader) InitKeys(sessionKey, decryptKey, encryptKey []byte) error {
+	decryptCipher, err := rc4.NewCipher(h.generateKey(sessionKey, decryptKey))
 	if err != nil {
 		return err
 	}
 
-	encryptCipher, err := rc4.NewCipher(h.generateKey(encryptKey))
+	encryptCipher, err := rc4.NewCipher(h.generateKey(sessionKey, encryptKey))
 	if err != nil {
 		return err
 	}
@@ -89,9 +88,9 @@ func (h *WrathHeader) Encrypt(data []byte) error {
 }
 
 // generateKey returns a cipher key based on key.
-func (h *WrathHeader) generateKey(key []byte) []byte {
+func (h *WrathHeader) generateKey(sessionKey, key []byte) []byte {
 	hash := hmac.New(crypto.SHA1.New, key)
-	hash.Write(h.sessionKey)
+	hash.Write(sessionKey)
 	return hash.Sum(nil)
 }
 
