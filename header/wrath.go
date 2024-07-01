@@ -45,7 +45,7 @@ type WrathHeader struct {
 
 // Encode returns a header with opcode and size. Encode expects size to not include the
 // 2 bytes for the opcode, and will add +2 to size. In WoTLK, server headers can be either
-// 4 or 5 bytes. If the client is authenticated, [Encrypt] must be used on the encoded header.
+// 4 or 5 bytes. Headers will automatically be encrypted if [Init] was called.
 func (h *WrathHeader) Encode(opcode uint16, size uint32) ([]byte, error) {
 	// Include the opcode in the size
 	size += 2
@@ -76,6 +76,12 @@ func (h *WrathHeader) Encode(opcode uint16, size uint32) ([]byte, error) {
 			byte(size),
 			byte(opcode),
 			byte(opcode >> 8),
+		}
+	}
+
+	if h.encryptCipher != nil {
+		if err := h.Encrypt(header); err != nil {
+			return nil, err
 		}
 	}
 
